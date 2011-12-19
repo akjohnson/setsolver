@@ -1,0 +1,11 @@
+# 0-3-4|1-6-9|2-3-8|4-5-8
+Color	Number	Shape	Fill
+Red	2	Diamond	Full
+Green	1	Diamond	Empty
+Green	3	Squiggle	Full
+Green	3	Squiggle	Lines
+Purple	1	Oval	Empty
+Red	2	Diamond	Empty
+Green	3	Diamond	Full
+Red	3	Squiggle	Lines
+Green	3	Squiggle	Empty
