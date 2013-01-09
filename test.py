@@ -1,7 +1,10 @@
 """
-TODO: Add solve test
+Currently tests:
+    * Card functions of equality and compatibility
+    * Whether or not a given group of features is a set 
+    * Deck solving
+
 TODO: Add file read in tests
-TODO: Add in
 """
 
 from math import factorial
@@ -59,7 +62,7 @@ class TestCardFunctions(unittest.TestCase):
         self.assertFalse(self.cardA.compatible(["Color", "Number", "Shape"]))
         self.assertFalse(self.cardA.compatible(["Color", "Direction", "Polarity", "Temperature"]))
 
-class TestIsFeaureASet(unittest.TestCase):
+class TestIsFeatureASet(unittest.TestCase):
 
     def setUp(self):
         """
