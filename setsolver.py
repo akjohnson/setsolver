@@ -74,7 +74,7 @@ class Card:
         """
 
         return ',\t'.join(["%s (%s)" % ( value, feat ) for feat, value
-            in self.features.iteritems()])
+            in self.features.items()])
 
     def __eq__(firstCard, SecondCard):
         """
@@ -204,49 +204,47 @@ class CardDeck:
         # such as for testing or print out the comments later
         self.comments = list()
 
-        f = file(filename, 'r')
+        with open(filename, 'r') as f:
 
-        for line in f:
-            line = line.strip();
+            for line in f:
+                line = line.strip();
 
-            # skip over comment lines and empty lines
-            if len(line) == 0 or line[0] == "#":
-                self.comments.append(line)
-                continue
+                # skip over comment lines and empty lines
+                if len(line) == 0 or line[0] == "#":
+                    self.comments.append(line)
+                    continue
 
-            # fields determined by a tab delineated line
-            fields = line.split("\t");
+                # fields determined by a tab delineated line
+                fields = line.split("\t");
 
-            # if we don't have this yet, it's the first non-commented line and
-            # we'll use those fields as features
-            if not self.features:
-                self.features = fields
-                [self.feature_values.update({feat: set()}) for feat
-                    in self.features]
-                continue
+                # if we don't have this yet, it's the first non-commented line and
+                # we'll use those fields as features
+                if not self.features:
+                    self.features = fields
+                    [self.feature_values.update({feat: set()}) for feat
+                        in self.features]
+                    continue
 
-            # Don't load a corrupt line that doesn't have fields for all
-            # features; warn about it
-            if len(fields) != len(self.features):
-                logger.warn("This line is corrupt: %s" % line)
-                continue
+                # Don't load a corrupt line that doesn't have fields for all
+                # features; warn about it
+                if len(fields) != len(self.features):
+                    logger.warn("This line is corrupt: %s" % line)
+                    continue
 
-            card_features = dict(zip(self.features, fields))
+                card_features = dict(zip(self.features, fields))
 
-            # Create the card and add it to the list
-            # doing this manually instead of the addCard function--we don't
-            # need the overhead of checking the features when loading
-            # from a file
-            c = Card(card_features)
-            self.cards.append(c)
+                # Create the card and add it to the list
+                # doing this manually instead of the addCard function--we don't
+                # need the overhead of checking the features when loading
+                # from a file
+                c = Card(card_features)
+                self.cards.append(c)
 
-            # We want a list of all distinct feature values,
-            # so add in any new ones
-            [self.feature_values[feat].add(value)
-                for feat, value in card_features.iteritems()
-                if value not in self.feature_values[feat]]
-
-        f.close()
+                # We want a list of all distinct feature values,
+                # so add in any new ones
+                [self.feature_values[feat].add(value)
+                    for feat, value in card_features.items()
+                    if value not in self.feature_values[feat]]
 
     def add_card(self, card):
         """
@@ -273,18 +271,18 @@ class CardDeck:
         Prints out a list of the cards in the deck.
         """
 
-        print "Cards: "
+        print("Cards: ")
         for i in range(0, len(self.cards)):
-            print "\tCard %s: %s" % (i, self.cards[i])
+            print("\tCard %s: %s" % (i, self.cards[i]))
 
     def print_feature_values(self):
         """
         Prints out all of the possible feature values in this deck.
         """
 
-        print "Feature values: "
-        for feat, values in self.feature_values.iteritems():
-            print "\t%s: %s" % (feat, ", ".join(values))
+        print("Feature values: ")
+        for feat, values in self.feature_values.items():
+            print("\t%s: %s" % (feat, ", ".join(values)))
 
     def generate_card_combos(self, items, nitems):
         """
@@ -298,7 +296,7 @@ class CardDeck:
         if nitems == 0:
             yield []
         else:
-            for i in xrange(0, len(items)):
+            for i in range(0, len(items)):
                 for item in self.generate_card_combos(items[i+1:], nitems - 1):
                     yield [items[i]] + item
 
@@ -350,12 +348,12 @@ class CardDeck:
         """
 
         if not self.sets:
-            print "No matches found."
+            print("No matches found.")
             return
 
-        print "Sets:"
+        print("Sets:")
         for cardset in self.sets:
-            print "\t%s" % cardset
+            print("\t%s" % cardset)
 
 def run_solver(infile, setsize = 3):
     """
@@ -417,7 +415,7 @@ if __name__ == '__main__':
 
     # only positional argument is the input file
     if len(pargs) < 1:
-        print >> sys.stderr, "Error: no input file to load!"
+        print("Error: no input file to load!", file=sys.stderr)
         parser.print_help()
         sys.exit(0)
     else:

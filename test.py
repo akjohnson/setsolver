@@ -122,7 +122,7 @@ class TestDeckSolve(unittest.TestCase):
             generated_combos += 1
 
             self.assertTrue(all(combo[i] <= combo[i+1]
-                    for i in xrange(len(combo)-1)))
+                    for i in range(len(combo)-1)))
 
         # also want to make sure we are generating the correct number
         # of combinations for this deck and set size
