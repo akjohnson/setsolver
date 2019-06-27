@@ -1,15 +1,15 @@
 import logging
 from optparse import OptionParser
-import os
 import sys
 
 # Constant string values indicating the type of match
-SAME = "Same" # all features are the same in the card set
-DIFFERENT = "Different" # all features are different in the card set
+SAME = "Same"  # all features are the same in the card set
+DIFFERENT = "Different"  # all features are different in the card set
 
 # format for log messages
 log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logger = logging.getLogger("setsolver")
+
 
 def is_set(*cards):
     """
@@ -35,6 +35,7 @@ def is_set(*cards):
 
     return set_types
 
+
 def is_feature_a_set(*feat_values):
     """
     Tests a batch of features to see if the conditions for a set are met.
@@ -56,25 +57,26 @@ def is_feature_a_set(*feat_values):
     else:
         return False
 
+
 class Card:
     """
     Card class, containing the features of each card.
     """
 
     def __init__(self, features):
-         """
-         Initialize a card, given a dictionary of features and their values.
-         """
+        """
+        Initialize a card, given a dictionary of features and their values.
+        """
 
-         self.features = features
+        self.features = features
 
     def __str__(self):
         """
         String is all of the value (feature) pairs.
         """
 
-        return ',\t'.join(["%s (%s)" % ( value, feat ) for feat, value
-            in self.features.items()])
+        return ',\t'.join(["%s (%s)" % (value, feat) for feat, value
+                           in self.features.items()])
 
     def __eq__(firstCard, SecondCard):
         """
@@ -105,8 +107,8 @@ class Card:
             secondCardOrFeatures = secondCardOrFeatures.get_feature_names()
 
         # compatible feature sets won't have any names different between them
-        return len( set( firstCard.get_feature_names() ).symmetric_difference(
-            set(secondCardOrFeatures)) ) == 0
+        return len(set(firstCard.get_feature_names()).symmetric_difference(
+            set(secondCardOrFeatures))) == 0
 
     def get_feature_names(self):
         """
@@ -115,13 +117,14 @@ class Card:
 
         return self.features.keys()
 
+
 class CardSet:
     """
     Keeps track of a card set, the cards' positions in the deck,
     and the types of sets the features represent.
     """
 
-    def __init__(self, cards, positions = None):
+    def __init__(self, cards, positions=None):
         """
         Takes a list of compatible cards, and optionally their positions
         in a Deck.
@@ -130,7 +133,6 @@ class CardSet:
         self.card_positions = positions
         self.cards = cards
         self.set_types = None
-
 
     def check_set(self):
         """
@@ -157,8 +159,8 @@ class CardSet:
         by dashes.
         """
         if self.card_positions:
-            return  u'%s' % "-".join([str(position)
-                for position in self.card_positions])
+            return u'%s' % "-".join([str(position)
+                                     for position in self.card_positions])
         else:
             return "No positions available"
 
@@ -169,12 +171,13 @@ class CardSet:
 
         return u'%s' % " / ".join([str(card) for card in self.cards])
 
+
 class CardDeck:
     """
     Class that can load a set of cards and their features from a file.
     """
 
-    def __init__(self, load_file = None):
+    def __init__(self, load_file=None):
         """
         Initializes the class and optionally loads a card file.
         """
@@ -207,7 +210,7 @@ class CardDeck:
         with open(filename, 'r') as f:
 
             for line in f:
-                line = line.strip();
+                line = line.strip()
 
                 # skip over comment lines and empty lines
                 if len(line) == 0 or line[0] == "#":
@@ -215,7 +218,7 @@ class CardDeck:
                     continue
 
                 # fields determined by a tab delineated line
-                fields = line.split("\t");
+                fields = line.split("\t")
 
                 # if we don't have this yet, it's the first non-commented line and
                 # we'll use those fields as features
@@ -256,11 +259,11 @@ class CardDeck:
         # if there are no existing features, this is the first card we
         # see and we'll make its features those of the set
         if not len(self.features):
-             self.features = card.get_feature_names()
+            self.features = card.get_feature_names()
         # If the card isn't compatible, return False
         else:
-             if not card.compatible(self.features):
-                 return False
+            if not card.compatible(self.features):
+                return False
 
         # add card to the end of the pile
         self.cards.append(card)
@@ -297,7 +300,8 @@ class CardDeck:
             yield []
         else:
             for i in range(0, len(items)):
-                for item in self.generate_card_combos(items[i+1:], nitems - 1):
+                for item in self.generate_card_combos(
+                        items[i + 1:], nitems - 1):
                     yield [items[i]] + item
 
     def card_position_combos(self, setsize):
@@ -314,7 +318,7 @@ class CardDeck:
 
         return self.generate_card_combos(self.cards, setsize)
 
-    def solve(self, setsize = 3):
+    def solve(self, setsize=3):
         """
         Finds the solutions for this set of cards give a set size.  The
         default set size is 3, like in the game.
@@ -330,15 +334,15 @@ class CardDeck:
                 setsize, len(self.features)))
 
         for combo in self.card_position_combos(setsize):
-           set_match = is_set( *[self.cards[position] for position in combo] )
-           if set_match:
-               self.sets.append(CardSet([self.cards[position]
-                   for position in combo], combo))
-               logger.debug("Set is a match: %s" % "-".join([str(position)
-                for position in combo]))
-           else:
-               logger.debug("Set is not a match: %s" % "-".join([str(position)
-                for position in combo]))
+            set_match = is_set(*[self.cards[position] for position in combo])
+            if set_match:
+                self.sets.append(CardSet([self.cards[position]
+                                          for position in combo], combo))
+                logger.debug("Set is a match: %s" % "-".join([str(position)
+                                                              for position in combo]))
+            else:
+                logger.debug("Set is not a match: %s" % "-".join([str(position)
+                                                                  for position in combo]))
 
         return self.sets
 
@@ -355,7 +359,8 @@ class CardDeck:
         for cardset in self.sets:
             print("\t%s" % cardset)
 
-def run_solver(infile, setsize = 3):
+
+def run_solver(infile, setsize=3):
     """
     Run the solver on a given file, printing out deck metadata and the results.
     """
@@ -363,18 +368,20 @@ def run_solver(infile, setsize = 3):
     s = CardDeck(infile)
     s.print_feature_values()
     s.print_cards()
-    s.solve(setsize = setsize)
+    s.solve(setsize=setsize)
     s.print_sets()
 
-################################################################################
+##########################################################################
 # STANDALONE SCRIPT ENABLING BELOW
-################################################################################
+##########################################################################
+
 
 default_parse_options = {
     "setsize": 3,
     "quiet": False,
     "debug": False,
 }
+
 
 def parser_setup():
     """
@@ -387,18 +394,19 @@ def parser_setup():
     parser = OptionParser()
 
     parser.add_option("-q", "--quiet", dest="quiet", action="store_true",
-        help="Don't print info messages to standard out, only warnings and errors.")
+                      help="Don't print info messages to standard out, only warnings and errors.")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
-        help="Print all debug messages to standard out.")
+                      help="Print all debug messages to standard out.")
 
     parser.add_option("-s", "--setsize", dest="setsize", type="int",
-        help="The size of the set to make.  Default is %default.",
-        metavar="SETSIZE")
+                      help="The size of the set to make.  Default is %default.",
+                      metavar="SETSIZE")
 
     parser.set_defaults(**default_parse_options)
-    parser.set_defaults(quiet = False, debug = False)
+    parser.set_defaults(quiet=False, debug=False)
 
     return parser
+
 
 if __name__ == '__main__':
 

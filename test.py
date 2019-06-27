@@ -1,7 +1,7 @@
 """
 Currently tests:
     * Card functions of equality and compatibility
-    * Whether or not a given group of features is a set 
+    * Whether or not a given group of features is a set
     * Deck solving
 
 TODO: Add file read in tests
@@ -10,7 +10,8 @@ TODO: Add file read in tests
 from math import factorial
 import unittest
 
-from setsolver import is_set, is_feature_a_set, Card, CardDeck, SAME, DIFFERENT
+from setsolver import is_feature_a_set, Card, CardDeck, SAME, DIFFERENT
+
 
 class TestCardFunctions(unittest.TestCase):
     """
@@ -22,12 +23,22 @@ class TestCardFunctions(unittest.TestCase):
         Sets up cards for the tests.
         """
 
-        self.cardA = Card({"Color": "purple", "Number": "2", "Shape": "square", "Fill": "empty"})
-        self.cardA2 = Card({"Color": "purple", "Number": "2", "Shape": "square", "Fill": "empty"})
-        self.cardB = Card({"Color": "blue", "Number": "1", "Shape": "circle", "Fill": "lines"})
-        self.cardC = Card({"Color": "black", "Direction": "west", "Polarity": "negative", "Temperature": "cold"})
-        self.cardD = Card({"Color": "teal", "Direction": "south", "Polarity": "positive"})
-        self.cardE = Card({"Color": "teal", "Direction": "south", "Polarity": "positive", "Temperature": "hot"})
+        self.cardA = Card({"Color": "purple", "Number": "2",
+                           "Shape": "square", "Fill": "empty"})
+        self.cardA2 = Card({"Color": "purple", "Number": "2",
+                            "Shape": "square", "Fill": "empty"})
+        self.cardB = Card({"Color": "blue", "Number": "1",
+                           "Shape": "circle", "Fill": "lines"})
+        self.cardC = Card({"Color": "black",
+                           "Direction": "west",
+                           "Polarity": "negative",
+                           "Temperature": "cold"})
+        self.cardD = Card(
+            {"Color": "teal", "Direction": "south", "Polarity": "positive"})
+        self.cardE = Card({"Color": "teal",
+                           "Direction": "south",
+                           "Polarity": "positive",
+                           "Temperature": "hot"})
 
     def test_equal(self):
         """
@@ -39,7 +50,8 @@ class TestCardFunctions(unittest.TestCase):
         self.assertEqual(self.cardA, self.cardA2)
         # these are not
         self.assertNotEqual(self.cardA, self.cardB)
-        # want to make sure one card isn't equal to another with a superset of features
+        # want to make sure one card isn't equal to another with a superset of
+        # features
         self.assertNotEqual(self.cardD, self.cardE)
 
     def test_compatible(self):
@@ -54,13 +66,17 @@ class TestCardFunctions(unittest.TestCase):
         self.assertTrue(self.cardA.compatible(self.cardB))
         # make sure cards with different features are not compatible
         self.assertFalse(self.cardA.compatible(self.cardC))
-        # make sure a card with a superset of features is not compatible with the subset
+        # make sure a card with a superset of features is not compatible with
+        # the subset
         self.assertFalse(self.cardC.compatible(self.cardD))
 
         # test against feature lists
-        self.assertTrue(self.cardA.compatible(["Color", "Number", "Shape", "Fill"]))
+        self.assertTrue(self.cardA.compatible(
+            ["Color", "Number", "Shape", "Fill"]))
         self.assertFalse(self.cardA.compatible(["Color", "Number", "Shape"]))
-        self.assertFalse(self.cardA.compatible(["Color", "Direction", "Polarity", "Temperature"]))
+        self.assertFalse(self.cardA.compatible(
+            ["Color", "Direction", "Polarity", "Temperature"]))
+
 
 class TestIsFeatureASet(unittest.TestCase):
 
@@ -96,6 +112,7 @@ class TestIsFeatureASet(unittest.TestCase):
         self.assertFalse(is_feature_a_set(*self.setB))
         self.assertFalse(is_feature_a_set(*self.setD))
 
+
 class TestDeckSolve(unittest.TestCase):
     """
     Tests different card sets of differing sizes.
@@ -113,7 +130,7 @@ class TestDeckSolve(unittest.TestCase):
         expected
         """
 
-        deck = CardDeck(load_file = testfile)
+        deck = CardDeck(load_file=testfile)
 
         # tally up the number we are generating while we check that they
         # are ordered, otherwise later tests won't work
@@ -121,8 +138,8 @@ class TestDeckSolve(unittest.TestCase):
         for combo in deck.card_position_combos(setsize):
             generated_combos += 1
 
-            self.assertTrue(all(combo[i] <= combo[i+1]
-                    for i in range(len(combo)-1)))
+            self.assertTrue(all(combo[i] <= combo[i + 1]
+                                for i in range(len(combo) - 1)))
 
         # also want to make sure we are generating the correct number
         # of combinations for this deck and set size
@@ -138,11 +155,12 @@ class TestDeckSolve(unittest.TestCase):
             return False
 
         # note: the set positions need to be in numeric order, ex. 0-3-5
-        expected_sets = set([s for s in deck.comments[0].strip(" #").split("|")])
+        expected_sets = set(
+            [s for s in deck.comments[0].strip(" #").split("|")])
 
         # for each set in the solved deck, see if the same "fingerprint"
         # exists in the expected sets
-        for s in deck.solve(setsize = setsize):
+        for s in deck.solve(setsize=setsize):
             self.assertIn(s.positions_string(), expected_sets)
 
     def test_two_features(self):
